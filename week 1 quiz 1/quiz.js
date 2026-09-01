@@ -20,6 +20,6 @@
 // 19. console.log(company.departments[1].employees[0]);
 // 20. console.log(company.departments.length);
 // 21. false
-// 22. console.log(inventory.stock.[1].details.price);
-// 23. console.log(inventory.stock.[0].details.inStock);
-// 24. This array has 2 numbers and the last one is 2
+// 22. console.log(inventory.stock[1].details.price);
+// 23. console.log(inventory.stock[0].details.inStock);
+// 24. This array has 3 numbers and the last one is 3
