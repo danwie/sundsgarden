@@ -139,7 +139,6 @@ app.patch("/books/:id", async (req, res) => {
   }
 });
 
-// Hämta alla författare
 app.get("/authors", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM authors");
