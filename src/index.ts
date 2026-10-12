@@ -3,7 +3,13 @@ import { env } from "./env.ts";
 import { pool } from "./db.ts";
 import { z } from "zod";
 import pg from "pg";
-import { bookSchema, bookPatchSchema, idSchema, type Book } from "./schemas.ts";
+import {
+  bookSchema,
+  bookPatchSchema,
+  bookQuerySchema,
+  idSchema,
+  type Book,
+} from "./schemas.ts";
 
 function getErrorMessage(err: unknown): string {
   return err instanceof Error ? err.message : "Unknown error";
@@ -16,15 +22,10 @@ app.get("/", async (req, res) => {
   res.json({ message: "Welcome." });
 });
 
-const booksSchema = z.object({
-  genre: z.string().optional(),
-  sort: z.enum(["title", "published_year", "genre"]).optional(),
-});
-
 app.get("/books", async (req, res) => {
-  const parsed = booksSchema.safeParse(req.query);
+  const parsed = bookQuerySchema.safeParse(req.query);
   if (!parsed.success) {
-    return res.status(400).json({ error: "could not parse query" });
+    return res.status(400).json({ errors: z.flattenError(parsed.error) });
   }
   const { genre, sort } = parsed.data;
 

@@ -29,3 +29,13 @@ export const bookPatchSchema = bookSchema
   .refine((data) => Object.keys(data).length > 0, {
     error: "At least one field must be sent.",
   });
+
+export const bookQuerySchema = z.object({
+  genre: z.string().optional(),
+  // sort är valfritt, men om det finns måste det vara något av värdena
+  sort: z
+    .enum(["title", "published_year", "genre"], {
+      error: "sort must be one of: title, published_year, genre",
+    })
+    .optional(),
+});
