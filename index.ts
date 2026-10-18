@@ -1,3 +1,4 @@
+// Bun loads .env, so dotenv is not needed - yay
 import express from "express";
 import mongoose from "mongoose";
 const port = 3000;
@@ -7,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 mongoose
-  .connect("mongodb://localhost:27017/myfirstdatabase")
+  .connect(process.env.MONGO_URI!) // ! betyder, lita på att den finns i .env
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Could not connect to MongoDB", err));
 
