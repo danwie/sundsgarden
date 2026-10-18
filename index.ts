@@ -1,6 +1,7 @@
 // Bun loads .env, so dotenv is not needed - yay
 import express from "express";
 import mongoose from "mongoose";
+import Book from "./models/Book.js";
 const port = 3000;
 
 const app = express();
@@ -12,58 +13,22 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Could not connect to MongoDB", err));
 
-const itemSchema = new mongoose.Schema({
-  name: String,
-  quantity: Number,
-});
-
-const Item = mongoose.model("Item", itemSchema);
-
-app.get("/items", async (req, res) => {
+app.get("/books", async (req, res) => {
   try {
-    const items = await Item.find();
-    res.json(items);
+    const books = await Book.find();
+    res.json(books);
   } catch (error) {
-    res.status(500).json({ error: "Failed to get items" });
+    res.status(500).json({ error: "Failed to get books" });
   }
 });
 
-app.post("/items", async (req, res) => {
+app.post("/books", async (req, res) => {
   try {
-    const newItem = new Item(req.body);
-    await newItem.save();
-    res.json(newItem);
+    const newBook = new Book(req.body);
+    await newBook.save();
+    res.json(newBook);
   } catch (error) {
-    res.status(500).json({ error: "Failed to post an item" });
-  }
-});
-
-app.put("/items/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body;
-    const updatedItem = await Item.findByIdAndUpdate(id, updatedData, {
-      new: true,
-    });
-    if (!updatedData) {
-      return res.status(404).json({ error: "item not found" });
-    }
-    res.json(updatedItem);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update an item" });
-  }
-});
-
-app.delete("/items/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleteditem = await Item.findByIdAndDelete(id);
-    if (!deleteditem) {
-      return res.status(404).json({ error: "item not found" });
-    }
-    res.json({ message: "Item deleted", item: deleteditem });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete an item" });
+    res.status(500).json({ error: "Failed to post a book" });
   }
 });
 
