@@ -1,7 +1,7 @@
 // Bun loads .env, so dotenv is not needed - yay
 import express from "express";
-import Book from "./models/Book.js";
-import "./db.js";
+import Book from "./models/Book.ts";
+import "./db.ts";
 const port = 3000;
 
 const app = express();
