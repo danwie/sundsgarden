@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: mongodb_container
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    container_name: mongo-express_container
+    image: mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_SERVER: ${ME_CONFIG_MONGODB_SERVER}
+    ports:
+      - "${MONGO_EXPRESS_PORT}:8081"
+
+volumes:
+  mongo_data:

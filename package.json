@@ -1,0 +1,17 @@
+{
+  "name": "sundsgarden",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "mongo-express": "^1.1.0-rc-4",
+    "mongoose": "^9.11.2"
+  }
+}
