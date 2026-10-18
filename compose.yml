@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: mongodb_container
+    container_name: ${ME_CONFIG_MONGODB_SERVER}
     image: mongo
     restart: unless-stopped
     ports:
