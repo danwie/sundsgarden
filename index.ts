@@ -13,7 +13,7 @@ app.get("/books", async (req, res) => {
     const books = await Book.find();
     res.json(books);
   } catch (error) {
-    res.status(500).json({ error: "Failed to get books" });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -23,7 +23,7 @@ app.post("/books", async (req, res) => {
     await newBook.save();
     res.json(newBook);
   } catch (error) {
-    res.status(500).json({ error: "Failed to post a book" });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -35,7 +35,7 @@ app.get("/books/:id", async (req, res) => {
     }
     res.json(book);
   } catch (error) {
-    res.status(500).json({ error: "Failed to get book" });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -43,13 +43,14 @@ app.put("/books/:id", async (req, res) => {
   try {
     const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      runValidators: true,
     });
     if (!updatedBook) {
       return res.status(404).json({ error: "Book not found" });
     }
     res.json(updatedBook);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update book" });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -61,7 +62,7 @@ app.delete("/books/:id", async (req, res) => {
     }
     res.json({ message: "Book deleted", book: deletedBook });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete book" });
+    res.status(400).json({ error: error.message });
   }
 });
 
