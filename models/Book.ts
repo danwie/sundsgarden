@@ -18,6 +18,10 @@ const bookSchema = new mongoose.Schema(
       min: [0, "publishedYear must be 0 or more"],
       max: [new Date().getFullYear(), "publishedYear cannot be in the future"],
     },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Author",
+    },
   },
   { timestamps: true },
 );

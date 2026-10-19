@@ -1,5 +1,6 @@
 // Bun loads .env, so dotenv is not needed - yay
 import express from "express";
+import Author from "./models/Author.ts";
 import Book from "./models/Book.ts";
 import "./db.ts";
 const port = 3000;
@@ -20,7 +21,7 @@ app.get("/books", async (req, res) => {
 
     const [total, data] = await Promise.all([
       Book.countDocuments(filter),
-      Book.find(filter).sort(sort).skip(skip).limit(limit),
+      Book.find(filter).populate("author").sort(sort).skip(skip).limit(limit),
     ]);
 
     res.json({ page, limit, total, data });
@@ -73,6 +74,34 @@ app.delete("/books/:id", async (req, res) => {
       return res.status(404).json({ error: "Book not found" });
     }
     res.json({ message: "Book deleted", book: deletedBook });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post("/authors", async (req, res) => {
+  try {
+    const newAuthor = new Author(req.body);
+    await newAuthor.save();
+    res.json(newAuthor);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get("/authors", async (req, res) => {
+  try {
+    const authors = await Author.find();
+    res.json(authors);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get("/authors/:id/books", async (req, res) => {
+  try {
+    const books = await Book.find({ author: req.params.id });
+    res.json(books);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
