@@ -10,8 +10,20 @@ app.use(express.json());
 
 app.get("/books", async (req, res) => {
   try {
-    const books = await Book.find();
-    res.json(books);
+    const { genre, sort } = req.query as { genre?: any; sort?: string };
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const filter = genre ? { genre } : {};
+
+    // skip: documents to skip (all previous pages); limit: documents per page
+    const skip = (page - 1) * limit;
+
+    const [total, data] = await Promise.all([
+      Book.countDocuments(filter),
+      Book.find(filter).sort(sort).skip(skip).limit(limit),
+    ]);
+
+    res.json({ page, limit, total, data });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
