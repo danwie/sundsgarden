@@ -1,8 +1,7 @@
 import express from "express";
 import { ForeignKeyConstraintError } from "sequelize";
-import { pool } from "./db.js";
 import sequelize from "./sequelize.js";
-import Book from "./models/Book.js";
+import { Book, Author } from "./models/relations.js";
 
 const app = express();
 app.use(express.json());
@@ -30,10 +29,14 @@ app.get("/", async (req, res) => {
   res.json({ message: "Welcome. This is the place to be." });
 });
 
+// ---------- Books ----------
+
 app.get("/books", async (req, res) => {
   const { genre, sort } = req.query;
   try {
-    const options: any = {};
+    const options: any = {
+      include: [{ model: Author, as: "author", attributes: ["id", "name"] }],
+    };
 
     if (genre) {
       options.where = { genre: String(genre) };
@@ -159,12 +162,14 @@ app.delete("/books/:id", async (req, res) => {
   }
 });
 
+// ---------- Authors ----------
+
 app.get("/authors", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM authors");
-    res.json(result.rows);
+    const authors = await Author.findAll();
+    res.json(authors);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
   }
 });
 
@@ -175,30 +180,27 @@ app.post("/authors", async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      "INSERT INTO authors (name) VALUES ($1) RETURNING *",
-      [name],
-    );
-    res.status(201).json(result.rows[0]);
+    const author = await Author.create({ name });
+    res.status(201).json(author);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
   }
 });
 
 app.get("/authors/:id/books", async (req, res) => {
   const { id } = req.params;
-  if (!id || !Number.isInteger(Number(id))) {
+  if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
   }
 
   try {
-    const result = await pool.query(
-      `SELECT * FROM books 
-       JOIN authors ON books.author_id = authors.id 
-       WHERE authors.id = $1`,
-      [id],
-    );
-    res.json(result.rows);
+    const author: any = await Author.findByPk(id, {
+      include: [{ model: Book, as: "books" }],
+    });
+    if (!author) {
+      return res.status(404).json({ error: `Author with id ${id} not found` });
+    }
+    res.json(author.books);
   } catch (error) {
     res.status(500).send(errorMessage(error));
   }
