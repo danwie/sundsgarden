@@ -1,9 +1,21 @@
 import express from "express";
+import { ForeignKeyConstraintError } from "sequelize";
 import { pool } from "./db.js";
 import sequelize from "./sequelize.js";
+import Book from "./models/Book.js";
 
 const app = express();
 app.use(express.json());
+
+const errorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
+const isValidId = (id: string | undefined) =>
+  !!id && Number.isInteger(Number(id));
+
+const bookNotFound = (id: string) => ({
+  error: `Book with id ${id} not found`,
+});
 
 const testDbConnection = async () => {
   try {
@@ -21,109 +33,63 @@ app.get("/", async (req, res) => {
 app.get("/books", async (req, res) => {
   const { genre, sort } = req.query;
   try {
-    let query = "SELECT * FROM books";
+    const options: any = {};
 
     if (genre) {
-      query += " WHERE genre = $1";
+      options.where = { genre: String(genre) };
     }
 
     if (sort) {
       const allowedSorts = ["title", "published_year", "genre"];
-      if (!allowedSorts.includes(sort)) {
+      if (!allowedSorts.includes(String(sort))) {
         return res.status(400).send("blasphemy sorting");
       }
-      query += ` ORDER BY ${sort}`;
+      options.order = [[String(sort), "ASC"]];
     }
 
-    const result = await pool.query(query, genre ? [genre] : []);
-    res.json(result.rows);
+    const books = await Book.findAll(options);
+    res.json(books);
   } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-/*
-app.post("/books", async (req, res) => {
-  const { title, genre, published_year } = req.body;
-  if (!title || title === "") {
-    return res.status(400).json({ error: "Title missing" });
-  }
-
-  try {
-    const result = await pool.query(
-      "INSERT INTO books (title, genre, published_year) VALUES ($1, $2, $3) RETURNING *",
-      [title, genre, published_year],
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-*/
-
-app.put("/books/:id", async (req, res) => {
-  const { id } = req.params;
-  if (!id || !Number.isInteger(Number(id))) {
-    return res.status(400).json({ error: "Id is not a number" });
-  }
-
-  const { title, genre, published_year } = req.body;
-  if (!title || title === "") {
-    return res.status(400).json({ error: "Title missing" });
-  }
-
-  try {
-    const result = await pool.query(
-      "UPDATE books SET title = $1, genre = $2, published_year = $3 WHERE id = $4 RETURNING *",
-      [title, genre, published_year, id],
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Book not found");
-    }
-    res.json(result.rows[0]);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-app.delete("/books/:id", async (req, res) => {
-  const { id } = req.params;
-  if (!id || !Number.isInteger(Number(id))) {
-    return res.status(400).json({ error: "Id is not a number" });
-  }
-  try {
-    const result = await pool.query(
-      "DELETE FROM books WHERE id = $1 RETURNING *",
-      [id],
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Book not found");
-    }
-    return res.status(200).send("Book deleted");
-  } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
   }
 });
 
 app.get("/books/:id", async (req, res) => {
   const { id } = req.params;
-  if (!id || !Number.isInteger(Number(id))) {
+  if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
   }
   try {
-    const result = await pool.query("SELECT * FROM BOOKS WHERE id = $1", [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).send("Book not found");
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json(bookNotFound(id));
     }
-    res.json(result.rows[0]);
+    res.json(book);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
   }
 });
 
-app.patch("/books/:id", async (req, res) => {
+app.post("/books", async (req, res) => {
+  const { title, genre, published_year, author_id } = req.body;
+  if (!title || title === "") {
+    return res.status(400).json({ error: "Title missing" });
+  }
+
+  try {
+    const book = await Book.create({ title, genre, published_year, author_id });
+    res.status(201).json(book);
+  } catch (error) {
+    if (error instanceof ForeignKeyConstraintError) {
+      return res.status(400).json({ error: "Author does not exists" });
+    }
+    res.status(500).send(errorMessage(error));
+  }
+});
+
+app.put("/books/:id", async (req, res) => {
   const { id } = req.params;
-  if (!id || !Number.isInteger(Number(id))) {
+  if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
   }
 
@@ -133,16 +99,63 @@ app.patch("/books/:id", async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      "UPDATE books SET title = COALESCE($1, title), genre = COALESCE($2, genre), published_year = COALESCE($3, published_year) WHERE id = $4 RETURNING *",
-      [title, genre, published_year, id],
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Book not found");
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json(bookNotFound(id));
     }
-    res.json(result.rows[0]);
+    await book.update({
+      title,
+      genre: genre ?? null,
+      published_year: published_year ?? null,
+    });
+    res.json(book);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
+  }
+});
+
+app.patch("/books/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!isValidId(id)) {
+    return res.status(400).json({ error: "Id is not a number" });
+  }
+
+  const { title, genre, published_year } = req.body;
+  if (title !== undefined && title === "") {
+    return res.status(400).json({ error: "Title cannot be empty" });
+  }
+
+  try {
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json(bookNotFound(id));
+    }
+    const changes: any = {};
+    if (title !== undefined) changes.title = title;
+    if (genre !== undefined) changes.genre = genre;
+    if (published_year !== undefined) changes.published_year = published_year;
+
+    await book.update(changes);
+    res.json(book);
+  } catch (error) {
+    res.status(500).send(errorMessage(error));
+  }
+});
+
+app.delete("/books/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!isValidId(id)) {
+    return res.status(400).json({ error: "Id is not a number" });
+  }
+  try {
+    const book = await Book.findByPk(id);
+    if (!book) {
+      return res.status(404).json(bookNotFound(id));
+    }
+    await book.destroy();
+    return res.status(200).send("Book deleted");
+  } catch (error) {
+    res.status(500).send(errorMessage(error));
   }
 });
 
@@ -187,32 +200,12 @@ app.get("/authors/:id/books", async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-app.post("/books", async (req, res) => {
-  const { title, genre, published_year, author_id } = req.body;
-  if (!title || title === "") {
-    return res.status(400).json({ error: "Title missing" });
-  }
-
-  try {
-    const result = await pool.query(
-      "INSERT INTO books (title, genre, published_year, author_id) VALUES ($1, $2, $3, $4) RETURNING *",
-      [title, genre, published_year, author_id],
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    if (error.code === "23503") {
-      return res.status(400).json({ error: "Author does not exists" });
-    }
-    res.status(500).send(error.message);
+    res.status(500).send(errorMessage(error));
   }
 });
 
 await testDbConnection();
 
-app.listen(process.env.PORT, (req, res) => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
