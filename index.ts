@@ -1,11 +1,18 @@
 import express from "express";
-import dotenv from "dotenv";
 import { pool } from "./db.js";
-
-dotenv.config();
+import sequelize from "./sequelize.js";
 
 const app = express();
 app.use(express.json());
+
+const testDbConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection established");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
 
 app.get("/", async (req, res) => {
   res.json({ message: "Welcome. This is the place to be." });
@@ -203,6 +210,8 @@ app.post("/books", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+await testDbConnection();
 
 app.listen(process.env.PORT, (req, res) => {
   console.log(`Server is running on port ${process.env.PORT}`);
