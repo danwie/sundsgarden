@@ -19,3 +19,15 @@ CREATE TABLE authors (
 
 -- note: author_id can be NULL
 ALTER TABLE books ADD COLUMN author_id INT REFERENCES authors(id);
+CREATE TABLE members (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE loans (
+  id SERIAL PRIMARY KEY,
+  member_id INT NOT NULL REFERENCES members(id),
+  book_id INT NOT NULL REFERENCES books(id),
+  loan_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  returned_at DATE
+);
