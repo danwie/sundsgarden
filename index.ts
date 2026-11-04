@@ -1,7 +1,7 @@
 import express from "express";
 import { ForeignKeyConstraintError } from "sequelize";
 import sequelize from "./sequelize.js";
-import { Book, Author } from "./models/relations.js";
+import { Book, Author, Member, Loan } from "./models/relations.js";
 
 const app = express();
 app.use(express.json());
@@ -201,6 +201,65 @@ app.get("/authors/:id/books", async (req, res) => {
       return res.status(404).json({ error: `Author with id ${id} not found` });
     }
     res.json(author.books);
+  } catch (error) {
+    res.status(500).send(errorMessage(error));
+  }
+});
+
+// ---------- Loans ----------
+
+app.post("/loans", async (req, res) => {
+  const { member_id, book_id } = req.body;
+  if (!isValidId(String(member_id)) || !isValidId(String(book_id))) {
+    return res
+      .status(400)
+      .json({ error: "member_id and book_id must be numbers" });
+  }
+
+  try {
+    const member = await Member.findByPk(member_id);
+    if (!member) {
+      return res
+        .status(404)
+        .json({ error: `Member with id ${member_id} not found` });
+    }
+
+    const book = await Book.findByPk(book_id);
+    if (!book) {
+      return res.status(404).json(bookNotFound(String(book_id)));
+    }
+
+    const activeLoan = await Loan.findOne({
+      where: { book_id, returned_at: null },
+    });
+    if (activeLoan) {
+      return res.status(409).json({ error: "Book is already on loan" }); // om boken redan är utlånad
+    }
+
+    const loan = await Loan.create({ member_id, book_id });
+    res.status(201).json(loan);
+  } catch (error) {
+    res.status(500).send(errorMessage(error));
+  }
+});
+
+app.get("/members/:id/loans", async (req, res) => {
+  const { id } = req.params;
+  if (!isValidId(id)) {
+    return res.status(400).json({ error: "Id is not a number" });
+  }
+
+  try {
+    const member = await Member.findByPk(id);
+    if (!member) {
+      return res.status(404).json({ error: `Member with id ${id} not found` });
+    }
+
+    const loans = await Loan.findAll({
+      where: { member_id: id },
+      include: [{ model: Book, as: "book" }],
+    });
+    res.json(loans);
   } catch (error) {
     res.status(500).send(errorMessage(error));
   }
