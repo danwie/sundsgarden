@@ -31,3 +31,25 @@ CREATE TABLE loans (
   loan_date DATE NOT NULL DEFAULT CURRENT_DATE,
   returned_at DATE
 );
+
+INSERT INTO authors (name)
+VALUES
+('J.R.R. Tolkien'),
+('George Orwell'),
+('Astrid Lindgren'),
+('Suzanne Collins');
+
+UPDATE books SET author_id = 1 WHERE title = 'The Hobbit';
+UPDATE books SET author_id = 2 WHERE title = '1984';
+UPDATE books SET author_id = 3 WHERE title = 'Pippi Longstocking';
+UPDATE books SET author_id = 4 WHERE title = 'The Hunger Games';
+
+INSERT INTO members (name)
+VALUES
+('Bob Andersson'),
+('Laura Eriksson');
+
+INSERT INTO loans (member_id, book_id, loan_date, returned_at)
+VALUES
+(1, 1, '2026-10-01', '2026-11-02'),
+(1, 2, '2026-11-01', NULL);
