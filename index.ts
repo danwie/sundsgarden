@@ -265,6 +265,21 @@ app.get("/members/:id/loans", async (req, res) => {
   }
 });
 
+app.get("/loans/active", async (req, res) => {
+  try {
+    const loans = await Loan.findAll({
+      where: { returned_at: null },
+      include: [
+        { model: Book, as: "book" },
+        { model: Member, as: "member" },
+      ],
+    });
+    res.json(loans);
+  } catch (error) {
+    res.status(500).send(errorMessage(error));
+  }
+});
+
 await testDbConnection();
 
 app.listen(process.env.PORT, () => {
