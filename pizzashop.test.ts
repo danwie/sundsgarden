@@ -26,4 +26,10 @@ describe("Pizza Shop Unit Tests", () => {
 
     expect(result).toBe(true);
   });
+
+  test("createPizza returns correct type and price for vegetarian", () => {
+    const pizza = createPizza("vegetarian");
+
+    expect(pizza).toEqual({ type: "vegetarian", price: 110 });
+  });
 });
