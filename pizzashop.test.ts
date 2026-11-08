@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { createPizza, orderPizza, sendOrder } from "./pizzashop";
+import { createPizza, sendOrder } from "./pizzashop";
 
 describe("Pizza Shop Unit Tests", () => {
   test("createPizza returns correct type and price", () => {
@@ -19,12 +19,6 @@ describe("Pizza Shop Unit Tests", () => {
     expect(Number.isInteger(id)).toBe(true);
     expect(id).toBeGreaterThanOrEqual(0);
     expect(id).toBeLessThan(1000);
-  });
-
-  test("orderPizza returns true for a valid pizza", () => {
-    const result = orderPizza("pepperoni");
-
-    expect(result).toBe(true);
   });
 
   test("createPizza returns correct type and price for vegetarian", () => {
