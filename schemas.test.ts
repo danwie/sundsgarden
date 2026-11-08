@@ -30,4 +30,8 @@ describe("Schema tests", () => {
   test("AmountSchema throws when argument is a string, even if it looks like a number", () => {
     expect(() => AmountSchema.parse("100")).toThrow();
   });
+
+  test("OrderIdSchema accepts order ID 0", () => {
+    expect(OrderIdSchema.parse(0)).toBe(0);
+  });
 });
