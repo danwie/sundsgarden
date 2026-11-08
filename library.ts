@@ -21,5 +21,11 @@ export const findBook = (title: unknown): Book => {
 };
 
 export const checkOutBook = (book: unknown): number => {
+  const validBook = BookSchema.parse(book);
+
+  if (validBook.copiesAvailable === 0) {
+    throw new Error("No copies available");
+  }
+
   return 1234;
 };
