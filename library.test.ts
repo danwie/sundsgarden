@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { findBook } from "./library";
+import { findBook, checkOutBook } from "./library";
 
 describe("Library Unit Tests", () => {
   test("findBook returns the book for dune", () => {
@@ -19,5 +19,10 @@ describe("Library Unit Tests", () => {
 
   test("findBook throws when the title is not a string", () => {
     expect(() => findBook(42)).toThrow();
+  });
+
+  test("checkOutBook returns a number", () => {
+    const loanId = checkOutBook({ title: "dune", copiesAvailable: 3 });
+    expect(typeof loanId).toBe("number");
   });
 });
