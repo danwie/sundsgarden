@@ -22,4 +22,8 @@ describe("Schema tests", () => {
       price: 120,
     });
   });
+
+  test("PizzaSchema does not accept pepperoni without a price", () => {
+    expect(() => PizzaSchema.parse({ type: "pepperoni" })).toThrow();
+  });
 });
