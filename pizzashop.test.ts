@@ -36,4 +36,8 @@ describe("Pizza Shop Unit Tests", () => {
       "Cannot charge the customer without a valid order ID!",
     );
   });
+
+  test("throws cannot charge the customer with a negative order ID", () => {
+    expect(() => chargeCustomer(-1, 100)).toThrow();
+  });
 });
