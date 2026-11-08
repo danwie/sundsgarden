@@ -16,4 +16,8 @@ describe("Library Unit Tests", () => {
   test("findBook throws for harry potter since it is not in the catalogue", () => {
     expect(() => findBook("harry potter")).toThrow();
   });
+
+  test("findBook throws when the title is not a string", () => {
+    expect(() => findBook(42)).toThrow();
+  });
 });
