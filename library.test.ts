@@ -12,4 +12,8 @@ describe("Library Unit Tests", () => {
       copiesAvailable: 0,
     });
   });
+
+  test("findBook throws for harry potter since it is not in the catalogue", () => {
+    expect(() => findBook("harry potter")).toThrow();
+  });
 });
