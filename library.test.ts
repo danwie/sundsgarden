@@ -37,4 +37,10 @@ describe("Library Unit Tests", () => {
     expect(loanId).toBeGreaterThanOrEqual(1000);
     expect(loanId).toBeLessThanOrEqual(9999);
   });
+
+  test("checkOutBook throws when no copies are available", () => {
+    expect(() =>
+      checkOutBook({ title: "foundation", copiesAvailable: 0 }),
+    ).toThrow("No copies available");
+  });
 });
