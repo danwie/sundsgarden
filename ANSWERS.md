@@ -7,3 +7,7 @@ orderPizza("vegetarian") belongs to the integration test in pizzashop.integratio
 ## Exercise 2
 
 The spelling of error message used the word cutomer (customer) and that would not have been found without a test. The program didn't crash and TypeScript or editor didn't complain. This means I should test the exact texts and not only return values or what is thrown.
+
+## Exercise 3
+
+toEqual compares a structure. toBe compares single value. toBe would always fail when comparing structure, because two different structures with the same content are not equal.
