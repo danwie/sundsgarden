@@ -15,4 +15,11 @@ describe("Schema tests", () => {
   test("PizzaTypeSchema does not accept Margherita with a capital M", () => {
     expect(() => PizzaTypeSchema.parse("Margherita")).toThrow();
   });
+
+  test("PizzaTypeSchema accepts pepperoni, price 120", () => {
+    expect(PizzaSchema.parse({ type: "pepperoni", price: 120 })).toEqual({
+      type: "pepperoni",
+      price: 120,
+    });
+  });
 });
