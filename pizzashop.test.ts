@@ -30,4 +30,10 @@ describe("Pizza Shop Unit Tests", () => {
   test("chargeCustomer returns true for a valid order ID and amount", () => {
     expect(chargeCustomer(42, 100)).toBe(true);
   });
+
+  test("throws cannot charge the customer without a valid order ID", () => {
+    expect(() => chargeCustomer(undefined, 100)).toThrow(
+      "Cannot charge the customer without a valid order ID!",
+    );
+  });
 });
