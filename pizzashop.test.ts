@@ -44,4 +44,8 @@ describe("Pizza Shop Unit Tests", () => {
   test("throws when the order ID isn't a whole number", () => {
     expect(() => chargeCustomer(12.5, 100)).toThrow();
   });
+
+  test("throws when the order amount is zero", () => {
+    expect(() => chargeCustomer(1, 0)).toThrow();
+  });
 });
