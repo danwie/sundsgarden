@@ -26,4 +26,8 @@ describe("Schema tests", () => {
   test("PizzaSchema does not accept pepperoni without a price", () => {
     expect(() => PizzaSchema.parse({ type: "pepperoni" })).toThrow();
   });
+
+  test("AmountSchema throws when argument is a string, even if it looks like a number", () => {
+    expect(() => AmountSchema.parse("100")).toThrow();
+  });
 });
