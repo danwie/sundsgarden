@@ -37,3 +37,11 @@ export const LoanSchema = z.object({
 });
 
 export type Loan = z.infer<typeof LoanSchema>;
+
+export const registerLoan = (
+  loanId: unknown,
+  title: unknown,
+  memberId: unknown,
+): Loan => {
+  return { loanId, title, memberId } as Loan;
+};
