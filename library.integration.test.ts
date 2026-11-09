@@ -8,4 +8,11 @@ describe("Library Integration Tests", () => {
     expect(loan.title).toBe("dune");
     expect(loan.memberId).toBe(7);
   });
+
+  test("borrowBook returns a loan ID between 1000 and 9999", () => {
+    const loan = borrowBook("dune", 7);
+
+    expect(loan.loanId).toBeGreaterThanOrEqual(1000);
+    expect(loan.loanId).toBeLessThanOrEqual(9999);
+  });
 });
