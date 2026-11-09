@@ -43,5 +43,5 @@ export const registerLoan = (
   title: unknown,
   memberId: unknown,
 ): Loan => {
-  return { loanId, title, memberId } as Loan;
+  return LoanSchema.parse({ loanId, title, memberId });
 };
