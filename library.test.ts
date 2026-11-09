@@ -55,4 +55,8 @@ describe("Library Unit Tests", () => {
       memberId: 7,
     });
   });
+
+  test("registerLoan throws when memberId is 0", () => {
+    expect(() => registerLoan(1234, "dune", 0)).toThrow();
+  });
 });
