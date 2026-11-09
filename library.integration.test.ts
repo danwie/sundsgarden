@@ -15,4 +15,8 @@ describe("Library Integration Tests", () => {
     expect(loan.loanId).toBeGreaterThanOrEqual(1000);
     expect(loan.loanId).toBeLessThanOrEqual(9999);
   });
+
+  test("borrowBook throws when there are no copies available", () => {
+    expect(() => borrowBook("foundation", 7)).toThrow("No copies available");
+  });
 });
