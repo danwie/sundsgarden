@@ -1,3 +1,4 @@
+import "./instrument.js";
 import express from "express";
 import { ForeignKeyConstraintError } from "sequelize";
 import sequelize from "./sequelize.js";
