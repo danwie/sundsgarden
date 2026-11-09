@@ -29,3 +29,11 @@ export const checkOutBook = (book: unknown): number => {
 
   return 1234;
 };
+
+export const LoanSchema = z.object({
+  loanId: z.number().int().positive(),
+  title: BookTitleSchema,
+  memberId: z.number().int().positive(),
+});
+
+export type Loan = z.infer<typeof LoanSchema>;
