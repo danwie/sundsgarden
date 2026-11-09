@@ -11,3 +11,7 @@ The spelling of error message used the word cutomer (customer) and that would no
 ## Exercise 3
 
 toEqual compares a structure. toBe compares single value. toBe would always fail when comparing structure, because two different structures with the same content are not equal.
+
+## Exercise 4
+
+Yes, the test could pass by luck, because a test only checks one of the 9000 possible numbers. If the code was wrong only some of the time, a single call would probably miss it. The test would be better if it was calling the function many times in a loop and checking the range every time. First I thought a loop through all the possible values would be best, but that would also be slow and inefficiant.A better solution would be to check the lower and upper part of the range, where the limits are. That is probably where an error would be located.
