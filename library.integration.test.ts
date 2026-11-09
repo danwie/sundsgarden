@@ -19,4 +19,8 @@ describe("Library Integration Tests", () => {
   test("borrowBook throws when there are no copies available", () => {
     expect(() => borrowBook("foundation", 7)).toThrow("No copies available");
   });
+
+  test("borrowBook throws for an invalid member ID", () => {
+    expect(() => borrowBook("dune", -1)).toThrow();
+  });
 });
