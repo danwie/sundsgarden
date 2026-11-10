@@ -11,3 +11,7 @@ Sentry is watching the other libraries.
 ## Exercise 2
 
 It contains: time and date, error type, tags (url, environment, os, level, browser user agent, interface_type, runtime.name, os.build, runtime, server_name), stack trace including the error, code and exact line that throws the error, context (memory, geography, locale, timezone, device info).
+
+## Exercise 3
+
+When the handler was above the routes it was run registered before anything happened, so that's why the error didn't transfer to Sentry. Express handles the routes in order, so handler needs to be at the bottom for it to know about the error.
