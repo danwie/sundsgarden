@@ -1,4 +1,5 @@
 import "./instrument.js";
+import * as Sentry from "@sentry/node";
 import express from "express";
 import { ForeignKeyConstraintError } from "sequelize";
 import sequelize from "./sequelize.js";
@@ -280,6 +281,13 @@ app.get("/loans/active", async (req, res) => {
     res.status(500).send(errorMessage(error));
   }
 });
+
+app.get("/debug-sentry", (req, res) => {
+  throw new Error("My first Sentry error!");
+});
+
+// setupExpressErrorHandler is marked deprecated
+Sentry.setupExpressErrorHandler(app);
 
 await testDbConnection();
 
