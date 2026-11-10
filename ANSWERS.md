@@ -15,3 +15,9 @@ It contains: time and date, error type, tags (url, environment, os, level, brows
 ## Exercise 3
 
 When the handler was above the routes it was run registered before anything happened, so that's why the error didn't transfer to Sentry. Express handles the routes in order, so handler needs to be at the bottom for it to know about the error.
+
+## Exercise 4
+
+Answer 1: In my routes I catch the errors myself, the error never travels to the Sentry handler. That's why I have to call captureException() myself.
+
+Answer 2: Sentry only showed me 1 issue. After I did some experimenting with debug: true I found that if several of the same error occurs after one another, only the first one is sent to Sentry. This is called Dedupe and this behaviour can be turned off. If similar errors occurs Sentry groups them into issues. One issue can have several events. The benefit is that when solving issues, there is only one issue for each problem and it is possible to see when it started, how long it's been going on and how many times it has occured.
