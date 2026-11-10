@@ -21,3 +21,7 @@ When the handler was above the routes it was run registered before anything happ
 Answer 1: In my routes I catch the errors myself, the error never travels to the Sentry handler. That's why I have to call captureException() myself.
 
 Answer 2: Sentry only showed me 1 issue. After I did some experimenting with debug: true I found that if several of the same error occurs after one another, only the first one is sent to Sentry. This is called Dedupe and this behaviour can be turned off. If similar errors occurs Sentry groups them into issues. One issue can have several events. The benefit is that when solving issues, there is only one issue for each problem and it is possible to see when it started, how long it's been going on and how many times it has occured.
+
+## Exercise 5
+
+When I call Sentry.captureException(error), Sentry creates an event. The event automatically gets the breadcrumbs and tags that were set earlier in the same context, so I can see them when I open the issue. A breadcrumb is a event text that give context to what happened before the error. A tag is a word that can be used to group and filter events. Example: One team member can focus on fixing bugs for a specific tag.
