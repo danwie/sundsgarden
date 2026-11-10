@@ -34,6 +34,11 @@ app.get("/", async (req, res) => {
 // ---------- Books ----------
 
 app.get("/books", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Fetch books route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { genre, sort } = req.query;
   try {
     const options: any = {
@@ -61,6 +66,11 @@ app.get("/books", async (req, res) => {
 });
 
 app.get("/books/:id", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Get book by id route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -78,6 +88,11 @@ app.get("/books/:id", async (req, res) => {
 });
 
 app.post("/books", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Post new book route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { title, genre, published_year, author_id } = req.body;
   if (!title || title === "") {
     return res.status(400).json({ error: "Title missing" });
@@ -96,6 +111,11 @@ app.post("/books", async (req, res) => {
 });
 
 app.put("/books/:id", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Replace book by id route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -124,6 +144,11 @@ app.put("/books/:id", async (req, res) => {
 });
 
 app.patch("/books/:id", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Edit book by id route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -153,6 +178,11 @@ app.patch("/books/:id", async (req, res) => {
 });
 
 app.delete("/books/:id", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Delete book by id route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -173,6 +203,11 @@ app.delete("/books/:id", async (req, res) => {
 // ---------- Authors ----------
 
 app.get("/authors", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Get authors route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "authors");
   try {
     const authors = await Author.findAll();
     res.json(authors);
@@ -183,6 +218,11 @@ app.get("/authors", async (req, res) => {
 });
 
 app.post("/authors", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Create author route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "authors");
   const { name } = req.body;
   if (!name) {
     return res.status(400).json({ error: "Name missing" });
@@ -198,6 +238,11 @@ app.post("/authors", async (req, res) => {
 });
 
 app.get("/authors/:id/books", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Get books from author route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "authors");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -220,6 +265,11 @@ app.get("/authors/:id/books", async (req, res) => {
 // ---------- Loans ----------
 
 app.post("/loans", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Create loan route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "loans");
   const { member_id, book_id } = req.body;
   if (!isValidId(String(member_id)) || !isValidId(String(book_id))) {
     return res
@@ -256,6 +306,11 @@ app.post("/loans", async (req, res) => {
 });
 
 app.get("/members/:id/loans", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Get loans for member route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "loans");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -279,6 +334,11 @@ app.get("/members/:id/loans", async (req, res) => {
 });
 
 app.get("/loans/active", async (req, res) => {
+  Sentry.addBreadcrumb({
+    message: "Get active loans route",
+    level: "info",
+  });
+  Sentry.setTag("feature", "loans");
   try {
     const loans = await Loan.findAll({
       where: { returned_at: null },
