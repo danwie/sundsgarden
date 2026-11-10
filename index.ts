@@ -55,6 +55,7 @@ app.get("/books", async (req, res) => {
     const books = await Book.findAll(options);
     res.json(books);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -71,6 +72,7 @@ app.get("/books/:id", async (req, res) => {
     }
     res.json(book);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -88,6 +90,7 @@ app.post("/books", async (req, res) => {
     if (error instanceof ForeignKeyConstraintError) {
       return res.status(400).json({ error: "Author does not exists" });
     }
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -115,6 +118,7 @@ app.put("/books/:id", async (req, res) => {
     });
     res.json(book);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -143,6 +147,7 @@ app.patch("/books/:id", async (req, res) => {
     await book.update(changes);
     res.json(book);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -160,6 +165,7 @@ app.delete("/books/:id", async (req, res) => {
     await book.destroy();
     return res.status(200).send("Book deleted");
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -171,6 +177,7 @@ app.get("/authors", async (req, res) => {
     const authors = await Author.findAll();
     res.json(authors);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -185,6 +192,7 @@ app.post("/authors", async (req, res) => {
     const author = await Author.create({ name });
     res.status(201).json(author);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -204,6 +212,7 @@ app.get("/authors/:id/books", async (req, res) => {
     }
     res.json(author.books);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -241,6 +250,7 @@ app.post("/loans", async (req, res) => {
     const loan = await Loan.create({ member_id, book_id });
     res.status(201).json(loan);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -263,6 +273,7 @@ app.get("/members/:id/loans", async (req, res) => {
     });
     res.json(loans);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
@@ -278,6 +289,7 @@ app.get("/loans/active", async (req, res) => {
     });
     res.json(loans);
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send(errorMessage(error));
   }
 });
