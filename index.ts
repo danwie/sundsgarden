@@ -4,6 +4,7 @@ import express from "express";
 import { ForeignKeyConstraintError } from "sequelize";
 import sequelize from "./sequelize.js";
 import { Book, Author, Member, Loan } from "./models/relations.js";
+import { reportError } from "./utils/reportError.js";
 
 const app = express();
 app.use(express.json());
@@ -38,7 +39,6 @@ app.get("/books", async (req, res) => {
     message: "Fetch books route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { genre, sort } = req.query;
   try {
     const options: any = {
@@ -60,7 +60,7 @@ app.get("/books", async (req, res) => {
     const books = await Book.findAll(options);
     res.json(books);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -70,7 +70,6 @@ app.get("/books/:id", async (req, res) => {
     message: "Get book by id route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -82,7 +81,7 @@ app.get("/books/:id", async (req, res) => {
     }
     res.json(book);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -92,7 +91,6 @@ app.post("/books", async (req, res) => {
     message: "Post new book route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { title, genre, published_year, author_id } = req.body;
   if (!title || title === "") {
     return res.status(400).json({ error: "Title missing" });
@@ -105,7 +103,7 @@ app.post("/books", async (req, res) => {
     if (error instanceof ForeignKeyConstraintError) {
       return res.status(400).json({ error: "Author does not exists" });
     }
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -115,7 +113,6 @@ app.put("/books/:id", async (req, res) => {
     message: "Replace book by id route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -138,7 +135,7 @@ app.put("/books/:id", async (req, res) => {
     });
     res.json(book);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -148,7 +145,6 @@ app.patch("/books/:id", async (req, res) => {
     message: "Edit book by id route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -172,7 +168,7 @@ app.patch("/books/:id", async (req, res) => {
     await book.update(changes);
     res.json(book);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -182,7 +178,6 @@ app.delete("/books/:id", async (req, res) => {
     message: "Delete book by id route",
     level: "info",
   });
-  Sentry.setTag("feature", "books");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -195,7 +190,7 @@ app.delete("/books/:id", async (req, res) => {
     await book.destroy();
     return res.status(200).send("Book deleted");
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "books");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -207,12 +202,11 @@ app.get("/authors", async (req, res) => {
     message: "Get authors route",
     level: "info",
   });
-  Sentry.setTag("feature", "authors");
   try {
     const authors = await Author.findAll();
     res.json(authors);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "authors");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -222,7 +216,6 @@ app.post("/authors", async (req, res) => {
     message: "Create author route",
     level: "info",
   });
-  Sentry.setTag("feature", "authors");
   const { name } = req.body;
   if (!name) {
     return res.status(400).json({ error: "Name missing" });
@@ -232,7 +225,7 @@ app.post("/authors", async (req, res) => {
     const author = await Author.create({ name });
     res.status(201).json(author);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "authors");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -242,7 +235,6 @@ app.get("/authors/:id/books", async (req, res) => {
     message: "Get books from author route",
     level: "info",
   });
-  Sentry.setTag("feature", "authors");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -257,7 +249,7 @@ app.get("/authors/:id/books", async (req, res) => {
     }
     res.json(author.books);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "authors");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -269,7 +261,6 @@ app.post("/loans", async (req, res) => {
     message: "Create loan route",
     level: "info",
   });
-  Sentry.setTag("feature", "loans");
   const { member_id, book_id } = req.body;
   if (!isValidId(String(member_id)) || !isValidId(String(book_id))) {
     return res
@@ -300,7 +291,7 @@ app.post("/loans", async (req, res) => {
     const loan = await Loan.create({ member_id, book_id });
     res.status(201).json(loan);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "loans");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -310,7 +301,6 @@ app.get("/members/:id/loans", async (req, res) => {
     message: "Get loans for member route",
     level: "info",
   });
-  Sentry.setTag("feature", "loans");
   const { id } = req.params;
   if (!isValidId(id)) {
     return res.status(400).json({ error: "Id is not a number" });
@@ -328,7 +318,7 @@ app.get("/members/:id/loans", async (req, res) => {
     });
     res.json(loans);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "loans");
     res.status(500).send(errorMessage(error));
   }
 });
@@ -338,7 +328,6 @@ app.get("/loans/active", async (req, res) => {
     message: "Get active loans route",
     level: "info",
   });
-  Sentry.setTag("feature", "loans");
   try {
     const loans = await Loan.findAll({
       where: { returned_at: null },
@@ -349,7 +338,7 @@ app.get("/loans/active", async (req, res) => {
     });
     res.json(loans);
   } catch (error) {
-    Sentry.captureException(error);
+    reportError(error, "loans");
     res.status(500).send(errorMessage(error));
   }
 });
