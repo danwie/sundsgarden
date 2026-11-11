@@ -26,6 +26,15 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
 
+  sonarqube:
+    container_name: my-sonarqube
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+
 volumes:
   pgdata:
   pgadmin_data:
+  sonarqube_data:
