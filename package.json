@@ -4,14 +4,22 @@
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "pg": "^8.23.1",
-    "sequelize": "^6.37.8"
+    "sequelize": "^6.37.8",
+    "zod": "^4.6.7"
   },
   "name": "sundsgarden",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@vitest/coverage-v8": "^5.1.0",
+    "vitest": "^5.1.0"
   },
   "peerDependencies": {
     "typescript": "^5"
