@@ -12,8 +12,6 @@ My project "passed". SonarQube found 0 issues: 0 in Security, 0 in Reliability a
 
 My scan found 0 issues (as I said in excercise 2). So I had no issues to read and describe. I am moving on to the next exercise.
 
-## Exercise 4
-
 My SonarQube groups issues by:
 
 - Security. It is about code that could be exploited, like a hard-coded password or token in the source code, or an SQL query built from user input.
@@ -21,3 +19,9 @@ My SonarQube groups issues by:
 - Maintainability. Is the code easy to read and change, and not too complex. Maby also if it has comments.
 
 SonarQube reads the code, but doesn't run it. Tests test the code before deploying it, but only the tests that I have defined. Sentry catch errors that actually happens.
+
+## Exercise 4
+
+If someone find my SonarQube token in package.json on GitHub, they could use it to authenticate against my SonarQube server. With a database password someone could connect to the database and read, change or in worst case scenario delete all the data. A Sentry DSN is less dangerous, because it only lets people send events to my project, not read them. Also: Git keeps the whole history. Even if I remove a secret it is still in the history. This means a secret that was pushed to GitHub has to be replaced by a new.
+
+It is better to put settings like the project key in sonar-project.properties because the file is part of the project and is committed to Git, so everyone uses the same settings.
