@@ -11,3 +11,13 @@ My project "passed". SonarQube found 0 issues: 0 in Security, 0 in Reliability a
 ## Exercise 3
 
 My scan found 0 issues (as I said in excercise 2). So I had no issues to read and describe. I am moving on to the next exercise.
+
+## Exercise 4
+
+My SonarQube groups issues by:
+
+- Security. It is about code that could be exploited, like a hard-coded password or token in the source code, or an SQL query built from user input.
+- Reliability. It is about code that can break or behave incorrectly. Like reading a value when it can be null.
+- Maintainability. Is the code easy to read and change, and not too complex. Maby also if it has comments.
+
+SonarQube reads the code, but doesn't run it. Tests test the code before deploying it, but only the tests that I have defined. Sentry catch errors that actually happens.
