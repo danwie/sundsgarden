@@ -25,3 +25,10 @@ SonarQube reads the code, but doesn't run it. Tests test the code before deployi
 If someone find my SonarQube token in package.json on GitHub, they could use it to authenticate against my SonarQube server. With a database password someone could connect to the database and read, change or in worst case scenario delete all the data. A Sentry DSN is less dangerous, because it only lets people send events to my project, not read them. Also: Git keeps the whole history. Even if I remove a secret it is still in the history. This means a secret that was pushed to GitHub has to be replaced by a new.
 
 It is better to put settings like the project key in sonar-project.properties because the file is part of the project and is committed to Git, so everyone uses the same settings.
+
+### Notes (these were tricky to find)
+
+- **Scanner command:** In my version of `@sonar/scan` (5.1.0) the command is called `sonar-scanner-npm`, not `sonar`. The assignment's `dotenv -- sonar` did not work for me, so my script is `"sonar": "dotenv run -- sonar-scanner-npm"`.
+- **dotenv-cli syntax:** In my version of `dotenv-cli` (11.1.0) the command needs the word `run`: `dotenv run -- ...` instead of `dotenv -- ...`. Without it I only got the usage text.
+- **Node path:** The scanner's built-in Node.js did not start on my computer, so I added `sonar.nodejs.executable=/opt/homebrew/bin/node` to `sonar-project.properties`. This path probably only works on my machine.
+- **Source folder:** My code is in the root and not in `src`, so I used `sonar.sources=.`.
