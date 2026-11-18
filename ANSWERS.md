@@ -50,3 +50,17 @@ In my own Express API, the whole set of routes is the API, GET /books is a funct
 **Question:** What happened to your agent's answer when you changed the tool's description to something vague, like `tool`? Try it, then change it back.
 
 When the description was just tool, the agent answered the question about running outside using only the weather. It never mentioned air quality In the log I could see that it did not call the air quality tool at all. It could not understand that the tool was about air quality. A clear name and description is what tells the agent when the tool is useful.
+
+## Exercise 5: Write a real prompt
+
+**Question:** Compare the answers from the bad prompt and the structured prompt. Give two concrete differences.
+
+First, the format and length. With "Help the user." the agent gave long, general texts with bullet points and several options, and it often ended with a question back to me. With the structured prompt every answer had the same short format: a one-line recommendation, a short reason, and a clothing or warm-up tip. Second, the structured prompt used the tools and numbers. The answers mentioned the temperature and the European AQI value (for example 13, good), while the bad prompt answers mostly talked about the weather in general. On "What should I do this evening?" the bad prompt gave a list of cozy home activities, while the structured prompt stayed in its role as a training coach and gave a training recommendation. I also noticed that the structured prompt was not fully consistent: with the same weather it said gym when I asked "Should I run today?" but run outside when I asked about the evening, because my prompt has no clear rule for snow and ice.
+
+**Question:** Which of the six parts made the biggest difference for your agent, and why?
+
+The Output part made the biggest difference, because it changed every answer from a long text into a short, fixed format that is easy to read. The Role part was also important, since it kept the agent on training instead of general evening suggestions. The Constraints part was the one that was too weak: because I had no rule for snow and ice, the agent made different choices for the same weather.
+
+**Question:** Your prompt is always read by the agent, on every message. A skill is only read when a task needs it. Imagine your agent could do ten different jobs, each with a long set of rules. Why would skills be better than one huge prompt?
+
+One huge prompt with the rules for all ten jobs would be sent to the model on every message, even when only one job is needed. That costs more, is slower, and fills the context window with rules that are not relevant. With skills, the agent only sees the name and a short description of each skill, and opens the full instructions for the one job it needs. That keeps the context small and focused, and makes each set of rules easier to update separately.
