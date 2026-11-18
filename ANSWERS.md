@@ -25,7 +25,7 @@ With a context window of 1, the agent only kept the most recent interaction. I t
 
 On every message, the agent sends everything in the history to the AI model, and the model has to read all of it again. A large context window potentially sends a lot of text each time. Since we pay per token and there also is a tier both for paid and free AI models, it is important to keep the text size to a minimum. A large text means it cost more money and it can also be slower. A small context window keeps only what the agent needs for the current conversation. It is also possible to compress a conversation to keep the text to a minimum. I find that a lot of AI models like to talk more than necessary, so it is always a good idea to instruct the model to only talk when actually needed. And only ask for information that is needed to solve a problem.
 
-## Exercise 3:
+## Exercise 3
 
 **Question:** Which questions made the agent use the weather tool, and which didn't? Nobody told the agent when to use the tool. How did it decide?
 
@@ -39,7 +39,7 @@ In an automation, the steps are fixed and every step runs every time. In the log
 
 If OpenWeatherMap offered an MCP server, the weather tool would not be tied to n8n. Any AI app with an MCP client could connect to the same server and use the same weather tools, without having to build a separate connection.
 
-## Exercise 4:
+## Exercise 4
 
 **Question:** Explain API, HTTP request and function in your own words. Use the vending machine from the video, **and** one example from your own Express API.
 
@@ -51,7 +51,7 @@ In my own Express API, the whole set of routes is the API, GET /books is a funct
 
 When the description was just tool, the agent answered the question about running outside using only the weather. It never mentioned air quality In the log I could see that it did not call the air quality tool at all. It could not understand that the tool was about air quality. A clear name and description is what tells the agent when the tool is useful.
 
-## Exercise 5: Write a real prompt
+## Exercise 5
 
 **Question:** Compare the answers from the bad prompt and the structured prompt. Give two concrete differences.
 
@@ -64,3 +64,21 @@ The Output part made the biggest difference, because it changed every answer fro
 **Question:** Your prompt is always read by the agent, on every message. A skill is only read when a task needs it. Imagine your agent could do ten different jobs, each with a long set of rules. Why would skills be better than one huge prompt?
 
 One huge prompt with the rules for all ten jobs would be sent to the model on every message, even when only one job is needed. That costs more, is slower, and fills the context window with rules that are not relevant. With skills, the agent only sees the name and a short description of each skill, and opens the full instructions for the one job it needs. That keeps the context small and focused, and makes each set of rules easier to update separately.
+
+## Exercise 6
+
+| What I broke                              | Which node failed | Error message (short)                                                    | What the message told me                                                             |
+| ----------------------------------------- | ----------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| Wrong API key for OpenWeatherMap          | Get weather       | Authorization failed - Invalid API key (401)                             | The key was rejected, so the problem is the credentials.                             |
+| City in a wrong format "Stockholm Sweden" | Get weather       | The resource you are requesting could not be found: city not found (404) | The key worked, but the city was not recognized, so the problem is the input format. |
+| Typo in the Open-Meteo URL "air-qualty"   | air quality       | The resource you are requesting could not be found: Not Found (404)      | The address does not exist, so the problem is the URL path.                          |
+
+**Asking an AI** I gave the AI the error message "The resource you are requesting could not be found / Not Found" and told it I had changed the URL of the air quality tool. It said that a 404 means the address does not exist and pointed to the typo in the path. This was correct. I fixed the error and the tool was working again.
+
+**Question:** One of your errors may not have stopped the workflow. Instead, the agent just gave a strange or wrong answer. Why is that kind of error more dangerous than a red error message?
+
+In all three tests the tool node turned red, but the workflow kept going and the agent still gave a confident answer: "Run outside today." When the weather tool failed, the agent guessed that it was "a bit brisk" or "chilly autumn air", while the real weather was -1°C with snow. When the air quality tool failed, it still recommended running outside. A red error is easy to notice and fix. An answer that is based on missing data looks fine, so someone can trust it and act on it.
+
+**Question:** You learned to read error reports in the Sentry week. What is similar about finding errors in n8n, and what is different?
+
+What is similar: in both tools I look at the error message, find where it happened, and use that to understand the cause. The status codes were also the same kind of clues. What is different: in n8n I looked at the execution log myself after I had broken something on purpose, while Sentry collects errors from running code and reports them to me. Sentry only reports errors that are actually thrown, so it would not catch a wrong answer.
