@@ -24,3 +24,17 @@ With a context window of 1, the agent only kept the most recent interaction. I t
 **Question:** Why not just set the context window to 1000? Think about what the model has to read on every message, and what that costs.
 
 On every message, the agent sends everything in the history to the AI model, and the model has to read all of it again. A large context window potentially sends a lot of text each time. Since we pay per token and there also is a tier both for paid and free AI models, it is important to keep the text size to a minimum. A large text means it cost more money and it can also be slower. A small context window keeps only what the agent needs for the current conversation. It is also possible to compress a conversation to keep the text to a minimum. I find that a lot of AI models like to talk more than necessary, so it is always a good idea to instruct the model to only talk when actually needed. And only ask for information that is needed to solve a problem.
+
+## Exercise 3:
+
+**Question:** Which questions made the agent use the weather tool, and which didn't? Nobody told the agent when to use the tool. How did it decide?
+
+The umbrella question and the jacket question made the agent use "Get weather". The question "What is 12 times 7?" did not. Nobody told the agent when to use the tool. The model reads the tool's name and description (here "Get weather") together with my question, and decides by itself if the tool is useful. A simple math question does not need weather data.
+
+**Question:** This is the difference between an agent and the automation from Exercise 1. Explain it using what you saw in the logs.
+
+In an automation, the steps are fixed and every step runs every time. In the logs the steps was different depending on my question. For the weather questions the log showed Memory, Gemini, Get weather, Memory, Gemini. For the multiplication, the log only showed Memory, Gemini, Memory.
+
+**Question:** Read the recap about MCP again. In this exercise, the weather tool only works inside n8n. What would change if OpenWeatherMap offered an MCP server instead? Name one advantage.
+
+If OpenWeatherMap offered an MCP server, the weather tool would not be tied to n8n. Any AI app with an MCP client could connect to the same server and use the same weather tools, without having to build a separate connection.
