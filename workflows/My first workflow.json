@@ -1,0 +1,237 @@
+{
+  "name": "My first workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -64,
+        96
+      ],
+      "id": "ea5c4690-2d6c-4b34-84d2-31bebb7130e9",
+      "name": "When chat message received",
+      "webhookId": "de801219-1d62-43fb-9120-c9d21036a356"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# Role\n\nYou are a personal training coach. You help one person decide how to train today: running (outdoors), cycling (outdoors) or the gym (indoors).\n\n# Task\n\nGive a clear recommendation for today's training, based on the current weather and air quality. Explain the reason in a few sentences.\n\n# Input\n\nThe user's question in the chat. The weather and air quality come from your tools, not from the user.\n\n# Tools\n\n- Get weather: current weather for my city. Use it for any question about training outside, clothing or timing.\n- Get air quality: current European AQI for my city. Use it whenever the user asks about training outside.\n  Always check both tools before you recommend outdoor training. If a question has nothing to do with training, do not use the tools.\n\n# Constraints\n\n- Never make up weather or air quality values. If a tool fails, say so.\n- European AQI: 0-20 good, 20-40 fair, 40-60 moderate, 60-80 poor, 80-100 very poor. If it is 60 or higher, recommend training indoors.\n- If the weather is dangerous (storm, ice, extreme cold), recommend the gym.\n- Do not give medical advice. If the user mentions pain or illness, tell them to rest and talk to a doctor.\n- Do not ask follow-up questions unless you really cannot answer without them.\n- Keep the answer short.\n\n# Output\n\n1. One-line recommendation (for example: \"Run outside today.\")\n2. Two or three short sentences with the reason, including the temperature and the AQI value.\n3. One tip for clothing or warm-up.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a28c3682-8770-411f-a352-8b51eda4d24f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "9da8a304-34fa-4d99-9d30-037a2861b5ac",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "sCZhNi16SLLbpT7k",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "daily-training"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "938632e0-5e08-4c84-bd41-47637117d86a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "cityName": "Sollentuna,SE"
+      },
+      "type": "n8n-nodes-base.openWeatherMapTool",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        192
+      ],
+      "id": "a311e1bf-2303-4ca1-96df-107c2976293f",
+      "name": "Get weather",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "2AXZCF6OVtQH1ilY",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Gets the current air quality for my city. Use this when the user asks about air quality or about being active outside.",
+        "url": "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=59.33&longitude=18.07&current=european_aqi,pm2_5,pm10&timezone=Europe/Stockholm",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        624,
+        32
+      ],
+      "id": "47a8d0c2-4c01-4f70-9f8b-95ef324d600e",
+      "name": "air quality"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "fcb6bbfe-8e87-4b02-94a3-03bc89ede4c7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5feca860-31a1-4643-858e-beb85898b1f5",
+              "name": "chatInput",
+              "value": "What training do you recommend today?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -16,
+        -64
+      ],
+      "id": "ff6abcc1-64c0-4f97-b074-74de3ff5c3f3",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "air quality": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9965a4eb-b427-45c4-9c4e-7751aac60434",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "27213a8918745e46850c5bab0ce0b51b790d714deb854c78719e613d25db7258"
+  },
+  "nodeGroups": [],
+  "id": "g9mFoLcxHxj3KuV4",
+  "tags": []
+}
