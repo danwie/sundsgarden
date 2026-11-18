@@ -38,3 +38,15 @@ In an automation, the steps are fixed and every step runs every time. In the log
 **Question:** Read the recap about MCP again. In this exercise, the weather tool only works inside n8n. What would change if OpenWeatherMap offered an MCP server instead? Name one advantage.
 
 If OpenWeatherMap offered an MCP server, the weather tool would not be tied to n8n. Any AI app with an MCP client could connect to the same server and use the same weather tools, without having to build a separate connection.
+
+## Exercise 4:
+
+**Question:** Explain API, HTTP request and function in your own words. Use the vending machine from the video, **and** one example from your own Express API.
+
+An API is like the buttons on a vending machine: it is the list of things I am allowed to ask for, and I do not need to know how the machine works inside. An HTTP request is me actually pressing the buttons and getting something back, for example with the method GET or POST. A function is one specific button. The one specific thing I can ask for.
+
+In my own Express API, the whole set of routes is the API, GET /books is a function, and sending that request from Insomnia is an HTTP request.
+
+**Question:** What happened to your agent's answer when you changed the tool's description to something vague, like `tool`? Try it, then change it back.
+
+When the description was just tool, the agent answered the question about running outside using only the weather. It never mentioned air quality In the log I could see that it did not call the air quality tool at all. It could not understand that the tool was about air quality. A clear name and description is what tells the agent when the tool is useful.
