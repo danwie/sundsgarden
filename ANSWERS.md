@@ -10,3 +10,19 @@
 **Why did nothing happen when you only pushed the branch?**
 
 GitHub starts a workflow if there is one or several workflow files in the .github/workflows directory and its "on" section matches. The workflow started after I committed "ci.yml" and pushed it to my repo. If there are several workflow files then they are run in parallell. They are independent of each other.
+
+## Exercise 2
+
+**How many jobs ran, and why?**
+
+Three jobs ran: "build (22.x)", "build (24.x)" and "build (26.x)". One job per version in the matrix.
+
+**Pizza and library test names**
+
+- Pizza: `pizzashop.test.ts` and `pizzashop.integration.test.ts`
+- Library: `library.test.ts` and `library.integration.test.ts`
+- Schemas: `schemas.test.ts`
+
+**Question: Why can a test pass on your laptop but fail in CI?**
+
+CI runs on a clean machine that is not the same as my laptop. My laptop has a newer Node version and things that happen to be installed. In my first run, Node 18 failed with "The requested module 'node:util' does not provide an export named 'styleText'", because Vitest 5 needs a newer Node. My laptop did not show the error because it runs a newer version. Other common causes are files that are only on my computer (like ".env" or an ignored file) and differences in operating system.
