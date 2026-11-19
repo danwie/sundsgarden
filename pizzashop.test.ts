@@ -48,4 +48,10 @@ describe("Pizza Shop Unit Tests", () => {
   test("throws when the order amount is zero", () => {
     expect(() => chargeCustomer(1, 0)).toThrow();
   });
+
+  test("red on purpose: margherita costs 999", () => {
+    const pizza = createPizza("margherita");
+
+    expect(pizza.price).toBe(999);
+  });
 });
