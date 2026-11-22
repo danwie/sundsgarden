@@ -29,6 +29,10 @@ CI runs on a clean machine that is not the same as my laptop. My laptop has a ne
 
 ## Exercise 3
 
+**Question:** Which event starts the new run on `week12/ci` after the merge?
+
+The tests run twice for the same change. First on the pull request event, befor the merge. Then after the merge on the push event.
+
 **Question:** Why is a red cross on the pull request better than one after merging?
 
 A red cross on the pull request tells me the code is broken and I can fix it on my branch. If the red cross comes after merging, then the broken code is already in the shared branch. It is better to catch a problem early.
