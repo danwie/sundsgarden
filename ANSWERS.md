@@ -36,3 +36,9 @@ The tests run twice for the same change. First on the pull request event, befor 
 **Question:** Why is a red cross on the pull request better than one after merging?
 
 A red cross on the pull request tells me the code is broken and I can fix it on my branch. If the red cross comes after merging, then the broken code is already in the shared branch. It is better to catch a problem early.
+
+## Exercise 4
+
+**Question:** Would this step have caught the _possibly null_ bug from Week 11, Exercise 9?
+
+I did not do Exercise 9 in Week 11. But now I've read the assignment. If I understand it correctly, the bug was using a value that can be null without checking first. My guess is that the typecheck step would have caught it. Vitest would not, because it only runs the code and does not check types (unless you write a specific test for it).
