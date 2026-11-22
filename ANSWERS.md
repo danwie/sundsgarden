@@ -42,3 +42,9 @@ A red cross on the pull request tells me the code is broken and I can fix it on 
 **Question:** Would this step have caught the _possibly null_ bug from Week 11, Exercise 9?
 
 I did not do Exercise 9 in Week 11. But now I've read the assignment. If I understand it correctly, the bug was using a value that can be null without checking first. My guess is that the typecheck step would have caught it. Vitest would not, because it only runs the code and does not check types (unless you write a specific test for it).
+
+## Exercise 5
+
+**Question:** What's the difference between `npm ci` and `npm install`, and why does CI use `npm ci`?
+
+npm ci installs exactly the versions in package-lock.json and it fails if package.json package-lock.json don't match. npm install starts from package.json and can pick newer versions inside the allowed ranges. If package-lock doesn't exist, npm install can create one using the latest versions. CI uses npm ci so every run gets exactly the same versions, and a new package version can't suddenly make CI red or green by itself.
