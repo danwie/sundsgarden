@@ -26,3 +26,9 @@ Three jobs ran: "build (22.x)", "build (24.x)" and "build (26.x)". One job per v
 **Question: Why can a test pass on your laptop but fail in CI?**
 
 CI runs on a clean machine that is not the same as my laptop. My laptop has a newer Node version and things that happen to be installed. In my first run, Node 18 failed with "The requested module 'node:util' does not provide an export named 'styleText'", because Vitest 5 needs a newer Node. My laptop did not show the error because it runs a newer version. Other common causes are files that are only on my computer (like ".env" or an ignored file) and differences in operating system.
+
+## Exercise 3
+
+**Question:** Why is a red cross on the pull request better than one after merging?
+
+A red cross on the pull request tells me the code is broken and I can fix it on my branch. If the red cross comes after merging, then the broken code is already in the shared branch. It is better to catch a problem early.
