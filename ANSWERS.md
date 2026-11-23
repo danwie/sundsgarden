@@ -48,3 +48,11 @@ I did not do Exercise 9 in Week 11. But now I've read the assignment. If I under
 **Question:** What's the difference between `npm ci` and `npm install`, and why does CI use `npm ci`?
 
 npm ci installs exactly the versions in package-lock.json and it fails if package.json package-lock.json don't match. npm install starts from package.json and can pick newer versions inside the allowed ranges. If package-lock doesn't exist, npm install can create one using the latest versions. CI uses npm ci so every run gets exactly the same versions, and a new package version can't suddenly make CI red or green by itself.
+
+## Exercise 6
+
+**Question:** What does branch protection do that CI alone can't?
+
+CI only runs the tests and shows a green or red mark. It doesn't stop anyone from merging. Branch protection makes the merge button grey/blocked while the required checks were failing. So CI finds the problem, and branch protection makes sure broken code can't be merged.
+
+My repository is public. THe rule was enforced.

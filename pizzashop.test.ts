@@ -52,6 +52,6 @@ describe("Pizza Shop Unit Tests", () => {
   test("red on purpose: margherita costs 999", () => {
     const pizza = createPizza("margherita");
 
-    expect(pizza.price).toBe(999);
+    expect(pizza.price).toBe(100);
   });
 });
